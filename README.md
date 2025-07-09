@@ -1,70 +1,108 @@
-# Getting Started with Create React App
+# TodoList App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern todo list application built with React and Tailwind CSS featuring sticky notes, task management, and calendar views.
+
+## Features
+
+- **Sticky Wall**: Create and organize sticky notes with different colors
+- **Task Management**: Add, edit, and track tasks with categories
+- **Calendar View**: View tasks and events in a calendar format
+- **Today View**: Focus on today's tasks
+- **Upcoming View**: See tasks for today, tomorrow, and this week
+- **Responsive Design**: Works on desktop and mobile devices
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── CalendarEvent.js      # Calendar event component
+│   ├── CalendarView.js       # Calendar view page
+│   ├── Sidebar.js            # Navigation sidebar
+│   ├── StickyNote.js         # Individual sticky note component
+│   ├── StickyWallView.js     # Sticky wall page
+│   ├── TaskItem.js           # Task item component
+│   ├── TodayView.js          # Today's tasks page
+│   └── UpcomingView.js       # Upcoming tasks page
+├── App.js                    # Main app component
+├── index.js                  # React app entry point
+└── index.css                 # Tailwind CSS imports
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v14 or higher)
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm start
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) to view it in the browser
 
 ## Available Scripts
 
-In the project directory, you can run:
+- `npm start` - Runs the app in development mode
+- `npm build` - Builds the app for production
+- `npm test` - Launches the test runner
+- `npm eject` - Ejects from Create React App (one-way operation)
 
-### `npm start`
+## Dependencies
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- React 18.2.0
+- Tailwind CSS 3.1.0
+- Lucide React (for icons)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Component Overview
 
-### `npm test`
+### Main Components
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **App.js**: Main application component that manages state and routing
+- **Sidebar.js**: Navigation sidebar with menu items, search, and settings
+- **StickyWallView.js**: Grid view for sticky notes
+- **TodayView.js**: Today's tasks with checkboxes and task management
+- **UpcomingView.js**: Upcoming tasks organized by timeframe
+- **CalendarView.js**: Calendar view with events and scheduling
 
-### `npm run build`
+### Sub-components
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **StickyNote.js**: Individual sticky note card
+- **TaskItem.js**: Task item with checkbox, title, and metadata
+- **CalendarEvent.js**: Calendar event display
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## State Management
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The app uses React's built-in state management with hooks:
 
-### `npm run eject`
+- `useState` for component state
+- Props drilling for state sharing between components
+- Event handlers for state updates
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Styling
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Built with Tailwind CSS for:
+- Responsive design
+- Component styling
+- Utility-first approach
+- Consistent color scheme and spacing
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Future Enhancements
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Local storage persistence
+- Task editing and deletion
+- Drag and drop functionality
+- Task categories and filters
+- Due date management
+- Search functionality
+- Dark mode support
