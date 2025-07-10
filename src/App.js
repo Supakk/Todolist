@@ -4,8 +4,11 @@ import Sidebar from './components/Sidebar.js';
 import StickyWallView from './components/StickyWallView.js';
 import CalendarView from './components/CalendarView.js';
 import TodayView from './components/TodayView.js';
+import TomorrowView from './components/TomorrowView.js';
+import ThisWeekView from './components/ThisWeekView.js';
 import UpcomingView from './components/UpcomingView.js';
 import AddStickyPopup from './components/AddStickyPopup.js';
+import EditStickyPopup from './components/EditStickyPopup.js';
 import ConfirmDeletePopup from './components/DeleteConfirmModal.js';
 import ErrorBoundary from './components/ErrorBoundary.js';
 import { useLocalStorage } from './hooks/useLocalStorage.js';
@@ -19,6 +22,8 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [noteToEdit, setNoteToEdit] = useState(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [noteToDelete, setNoteToDelete] = useState(null);
   const [appError, setAppError] = useState(null);
@@ -126,6 +131,33 @@ const App = () => {
     setNoteCount(prevCount => prevCount + 1);
     setShowAddModal(false);
   }, 'Error adding sticky note'), [stickyColors, noteCount, setStickyNotes, setNoteCount, validateStickyNote, withErrorHandling]);
+
+  const editStickyNote = useCallback(withErrorHandling((updatedNote) => {
+    if (!updatedNote || typeof updatedNote !== 'object') {
+      throw new Error('Invalid note data');
+    }
+    
+    if (!validateStickyNote(updatedNote)) {
+      throw new Error('Invalid sticky note data');
+    }
+    
+    setStickyNotes(prevNotes => 
+      prevNotes.map(note => 
+        note.id === updatedNote.id ? updatedNote : note
+      )
+    );
+    setShowEditModal(false);
+    setNoteToEdit(null);
+  }, 'Error editing sticky note'), [setStickyNotes, validateStickyNote, withErrorHandling]);
+
+  const requestEditStickyNote = useCallback((note) => {
+    if (!note || typeof note !== 'object') {
+      console.error('Invalid note for editing');
+      return;
+    }
+    setNoteToEdit(note);
+    setShowEditModal(true);
+  }, []);
 
   const requestDeleteStickyNote = useCallback((noteId) => {
     if (typeof noteId !== 'number' && typeof noteId !== 'string') {
@@ -241,6 +273,7 @@ const App = () => {
               stickyNotes={stickyNotes}
               addNewStickyNote={() => setShowAddModal(true)}
               deleteStickyNote={requestDeleteStickyNote}
+              editStickyNote={requestEditStickyNote}
             />
           );
         case 'calendar':
@@ -248,6 +281,24 @@ const App = () => {
         case 'today':
           return (
             <TodayView 
+              tasks={tasks} 
+              onToggleTask={toggleTask} 
+              onAddTask={addNewTask} 
+              onDeleteTask={deleteTask} 
+            />
+          );
+        case 'tomorrow':
+          return (
+            <TomorrowView 
+              tasks={tasks} 
+              onToggleTask={toggleTask} 
+              onAddTask={addNewTask} 
+              onDeleteTask={deleteTask} 
+            />
+          );
+        case 'thisweek':
+          return (
+            <ThisWeekView 
               tasks={tasks} 
               onToggleTask={toggleTask} 
               onAddTask={addNewTask} 
@@ -280,8 +331,8 @@ const App = () => {
         </div>
       );
     }
-  }, [currentView, stickyNotes, selectedDate, calendarEvents, tasks, toggleTask, addNewTask, deleteTask, requestDeleteStickyNote, isLoading]);
-
+  }, [currentView, stickyNotes, selectedDate, calendarEvents, tasks, toggleTask, addNewTask, deleteTask, requestDeleteStickyNote, requestEditStickyNote, isLoading]);
+ 
   // Error display component
   const ErrorDisplay = ({ error, onDismiss }) => (
     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-2 flex justify-between items-center">
@@ -344,6 +395,15 @@ const App = () => {
           isOpen={showAddModal}
           onClose={() => setShowAddModal(false)}
           onAdd={addNewStickyNote}
+        />
+        <EditStickyPopup
+          isOpen={showEditModal}
+          onClose={() => {
+            setShowEditModal(false);
+            setNoteToEdit(null);
+          }}
+          onSave={editStickyNote}
+          note={noteToEdit}
         />
         <ConfirmDeletePopup
           isOpen={showConfirmDelete}
