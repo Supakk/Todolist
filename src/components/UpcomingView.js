@@ -1,10 +1,10 @@
 // === File: components/UpcomingView.js ===
 import React, { useState } from 'react';
 import { Plus, ChevronRight, Calendar } from 'lucide-react';
+import AddTaskModal from './AddTaskModel';
 
 const UpcomingView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskSection, setNewTaskSection] = useState('today');
 
   const today = new Date();
@@ -41,7 +41,7 @@ const UpcomingView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
         </button>
         <div>
           <span className={`text-gray-900 ${task.completed ? 'line-through text-gray-500' : ''}`}>
-            {task.title}
+            {typeof task.title === 'string' ? task.title : (console.warn('Invalid title for task', task), '[Invalid Title]')}
           </span>
           {showDetails && (
             <div className="flex items-center space-x-2 mt-1">
@@ -88,26 +88,21 @@ const UpcomingView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
     </button>
   );
 
-  const handleAddTask = () => {
-    if (newTaskTitle.trim()) {
+  const handleAddTask = (title, section) => {
+    if (title && title.trim()) {
       let taskDate = new Date();
-      
-      if (newTaskSection === 'tomorrow') {
-        taskDate = new Date(today);
-        taskDate.setDate(today.getDate() + 1);
-      } else if (newTaskSection === 'thisWeek') {
-        taskDate = new Date(today);
-        taskDate.setDate(today.getDate() + 3); // 3 days from now
+      if (section === 'tomorrow') {
+        taskDate = new Date();
+        taskDate.setDate(taskDate.getDate() + 1);
+      } else if (section === 'thisWeek') {
+        taskDate = new Date();
+        taskDate.setDate(taskDate.getDate() + 3);
       }
-
       onAddTask({
-        title: newTaskTitle,
+        title: title.trim(),
         list: 'Work',
-        date: taskDate
+        date: taskDate.toISOString()
       });
-      
-      setNewTaskTitle('');
-      setShowAddModal(false);
     }
   };
 
@@ -165,42 +160,12 @@ const UpcomingView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
         </div>
       </div>
 
-      {/* Add Task Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h3 className="text-lg font-semibold mb-4">Add New Task</h3>
-            <input
-              type="text"
-              value={newTaskTitle}
-              onChange={(e) => setNewTaskTitle(e.target.value)}
-              placeholder="Enter task title..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleAddTask();
-                }
-              }}
-              autoFocus
-            />
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAddTask}
-                disabled={!newTaskTitle.trim()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Add Task
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AddTaskModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onAdd={handleAddTask}
+        section={newTaskSection}
+      />
     </div>
   );
 };

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Plus, ChevronRight, Calendar, Trash2 } from 'lucide-react';
+import AddTaskModal from './AddTaskModel';
 
 const ThisWeekView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newTaskTitle, setNewTaskTitle] = useState('');
 
   // กรองเฉพาะ tasks ที่เป็นสัปดาห์นี้ (ไม่รวมวันนี้และพรุ่งนี้)
   const today = new Date();
@@ -75,20 +75,16 @@ const ThisWeekView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
     </div>
   );
 
-  const handleAddTask = () => {
-    if (newTaskTitle.trim()) {
-      // สร้าง task สำหรับสัปดาห์นี้ (3 วันข้างหน้า)
+  const handleAddTask = (title) => {
+    if (title && title.trim()) {
+      const today = new Date();
       const taskDate = new Date(today);
       taskDate.setDate(today.getDate() + 3);
-      
       onAddTask({
-        title: newTaskTitle,
+        title: title.trim(),
         list: 'Work',
-        date: taskDate
+        date: taskDate.toISOString()
       });
-      
-      setNewTaskTitle('');
-      setShowAddModal(false);
     }
   };
 
@@ -116,43 +112,12 @@ const ThisWeekView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
           ))
         )}
       </div>
-
-      {/* Add Task Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h3 className="text-lg font-semibold mb-4">Add New Task for This Week</h3>
-            <input
-              type="text"
-              value={newTaskTitle}
-              onChange={(e) => setNewTaskTitle(e.target.value)}
-              placeholder="Enter task title..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleAddTask();
-                }
-              }}
-              autoFocus
-            />
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAddTask}
-                disabled={!newTaskTitle.trim()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Add Task
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AddTaskModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onAdd={handleAddTask}
+        section="thisWeek"
+      />
     </div>
   );
 };

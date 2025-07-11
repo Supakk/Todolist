@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Plus, ChevronRight, Calendar, Trash2 } from 'lucide-react';
+import AddTaskModal from './AddTaskModel';
 
 const TodayView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newTaskTitle, setNewTaskTitle] = useState('');
 
   // กรองเฉพาะ tasks ที่เป็นวันนี้
   const today = new Date();
@@ -11,6 +11,13 @@ const TodayView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
     const taskDate = new Date(task.date);
     return taskDate.toDateString() === today.toDateString();
   });
+
+  const getValidTitle = (title) => {
+    if (typeof title === 'string' && title.trim() !== '') {
+      return title.trim();
+    }
+    return 'Untitled Task';
+  };
 
   const TaskItem = ({ task, showDetails = true }) => (
     <div className="flex items-center justify-between py-3 px-4 bg-white rounded-lg shadow hover:shadow-md group">
@@ -23,7 +30,7 @@ const TodayView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
         </button>
         <div>
           <span className={`text-gray-900 ${task.completed ? 'line-through text-gray-500' : ''}`}>
-            {task.title}
+            {getValidTitle(task.title)}
           </span>
           {showDetails && (
             <div className="flex items-center space-x-2 mt-1">
@@ -70,16 +77,15 @@ const TodayView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
     </div>
   );
 
-  const handleAddTask = () => {
-    if (newTaskTitle.trim()) {
+  const handleAddTask = (title) => {
+    if (title && title.trim()) {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
       onAddTask({
-        title: newTaskTitle,
+        title: title.trim(),
         list: 'Work',
-        date: new Date()
+        date: todayStart.toISOString()
       });
-      
-      setNewTaskTitle('');
-      setShowAddModal(false);
     }
   };
 
@@ -97,47 +103,22 @@ const TodayView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
       </div>
       
       <div className="space-y-3">
-        {todayTasks.map(task => (
-          <TaskItem key={task.id} task={task} />
-        ))}
-      </div>
-
-      {/* Add Task Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-96">
-            <h3 className="text-lg font-semibold mb-4">Add New Task</h3>
-            <input
-              type="text"
-              value={newTaskTitle}
-              onChange={(e) => setNewTaskTitle(e.target.value)}
-              placeholder="Enter task title..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  handleAddTask();
-                }
-              }}
-              autoFocus
-            />
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAddTask}
-                disabled={!newTaskTitle.trim()}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Add Task
-              </button>
-            </div>
+        {todayTasks.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <p>No tasks scheduled for today</p>
           </div>
-        </div>
-      )}
+        ) : (
+          todayTasks.map(task => (
+            <TaskItem key={task.id} task={task} />
+          ))
+        )}
+      </div>
+      <AddTaskModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onAdd={handleAddTask}
+        section="today"
+      />
     </div>
   );
 };
