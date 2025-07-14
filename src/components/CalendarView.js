@@ -29,20 +29,6 @@ const CalendarView = ({
     });
   };
 
-  // Helper: get all tasks for a specific date
-  const getTasksForDate = (date) => {
-    const allTasks = [
-      ...upcomingTasks,
-      ...todayTasks,
-      ...tomorrowTasks,
-      ...weekTasks,
-    ];
-    return allTasks.filter(task => {
-      const taskDate = new Date(task.date);
-      return taskDate.toDateString() === date.toDateString();
-    });
-  };
-
   // Time slots for day view
   const timeSlots = [];
   for (let hour = 0; hour < 24; hour++) {
