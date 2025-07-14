@@ -1,0 +1,8 @@
+# React Router SPA fallback
+/*    /index.html   200
+
+# หรือหากอยาก custom error page
+# /old-page    /new-page   301
+
+# หรือป้องกันการเข้าถึงบาง path
+# /admin/*     /404.html   404
