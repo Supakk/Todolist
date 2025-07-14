@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Plus, Search, Calendar, User, Clock, MapPin, MoreHorizontal } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Search, User } from 'lucide-react';
 import AddEventModal from './AddEventModal';
 import ConfirmDeletePopup from './DeleteConfirmModal';
 
@@ -15,7 +15,6 @@ const CalendarView = ({
   onDeleteTask
 }) => {
   const [viewType, setViewType] = useState('day');
-  const [showSidebar, setShowSidebar] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editEvent, setEditEvent] = useState(null);
@@ -42,14 +41,6 @@ const CalendarView = ({
       const taskDate = new Date(task.date);
       return taskDate.toDateString() === date.toDateString();
     });
-  };
-
-  // Helper: get all items (events + tasks) for a specific date
-  const getItemsForDate = (date) => {
-    return [
-      ...getEventsForDate(date).map(e => ({ ...e, _type: 'event' })),
-      ...getTasksForDate(date).map(t => ({ ...t, _type: 'task' })),
-    ];
   };
 
   // Time slots for day view
@@ -89,7 +80,6 @@ const CalendarView = ({
     const year = selectedDate.getFullYear();
     const month = selectedDate.getMonth();
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - (firstDay.getDay() || 7) + 1);
     
@@ -187,7 +177,7 @@ const CalendarView = ({
                         height: '48px',
                         zIndex: 1
                       }}
-                      onClick={() => setShowSidebar(true)}
+                      onClick={() => {}}
                     >
                       <div className="font-medium text-blue-800">{event.title}</div>
                       <div className="text-blue-600">{event.start}</div>
