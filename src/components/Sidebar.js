@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Plus, Search, ChevronRight, ChevronDown, Menu, X, Check, Tag, List, Hash, Trash2, AlertTriangle } from 'lucide-react';
+import { Calendar, Plus, Search, ChevronRight, ChevronDown, Menu, X, Check, Hash, Trash2, AlertTriangle } from 'lucide-react';
 import { FaCalendarDay } from "react-icons/fa";
 import { FaCalendarDays } from "react-icons/fa6";
 import { FaRegCalendarDays } from "react-icons/fa6";
