@@ -2,19 +2,26 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 
-const StickyNote = ({ note, onDelete, onEdit }) => (
-  <div className={`${note.color} p-4 rounded-lg shadow-md relative`}>
+const StickyNote = ({ note, onDelete, onEdit, onClick }) => (
+  <div
+    className={`${note.color} p-4 rounded-lg shadow-md relative cursor-pointer`}
+    onClick={e => {
+      // Prevent click from edit/delete buttons from bubbling
+      if (e.target.closest('button')) return;
+      if (onClick) onClick();
+    }}
+  >
     {/* ปุ่ม Edit และ Delete */}
     <div className="absolute top-2 right-2 flex gap-1">
       <button
-        onClick={() => onEdit(note)}
+        onClick={e => { e.stopPropagation(); onEdit(note); }}
         className="text-gray-600 hover:text-blue-600 transition"
         aria-label="Edit note"
       >
         <FaEdit size={12} />
       </button>
       <button
-        onClick={() => onDelete(note.id)}
+        onClick={e => { e.stopPropagation(); onDelete(note.id); }}
         className="text-gray-600 hover:text-red-600 transition"
         aria-label="Delete note"
       >
@@ -45,6 +52,7 @@ StickyNote.propTypes = {
   }).isRequired,
   onDelete: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
 };
 
 export default StickyNote;

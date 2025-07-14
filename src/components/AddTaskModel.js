@@ -1,16 +1,30 @@
 import React, { useState, useEffect } from 'react';
 
-const AddTaskModal = ({ isOpen, onClose, onAdd, initialTitle = '', section = 'today' }) => {
+const AddTaskModal = ({ isOpen, onClose, onAdd, initialTitle = '', section = 'today', lists = [], tags = [] }) => {
   const [title, setTitle] = useState(initialTitle);
+  const [selectedList, setSelectedList] = useState(lists[0]?.name || '');
+  const [selectedTags, setSelectedTags] = useState([]);
 
   useEffect(() => {
-    if (isOpen) setTitle(initialTitle);
-  }, [isOpen, initialTitle]);
+    if (isOpen) {
+      setTitle(initialTitle);
+      setSelectedList(lists[0]?.name || '');
+      setSelectedTags([]);
+    }
+  }, [isOpen, initialTitle, lists]);
+
+  const handleTagToggle = (tagName) => {
+    setSelectedTags((prev) =>
+      prev.includes(tagName) ? prev.filter((t) => t !== tagName) : [...prev, tagName]
+    );
+  };
 
   const handleAdd = () => {
     if (title.trim()) {
-      onAdd(title.trim(), section);
+      onAdd(title.trim(), section, selectedList, selectedTags);
       setTitle('');
+      setSelectedTags([]);
+      setSelectedList(lists[0]?.name || '');
       onClose();
     }
   };
@@ -30,6 +44,33 @@ const AddTaskModal = ({ isOpen, onClose, onAdd, initialTitle = '', section = 'to
           onKeyPress={e => { if (e.key === 'Enter') handleAdd(); }}
           autoFocus
         />
+        <div className="mt-3">
+          <label className="block text-sm font-medium text-gray-700 mb-1">List</label>
+          <select
+            className="w-full px-2 py-1 border border-gray-300 rounded-lg"
+            value={selectedList}
+            onChange={e => setSelectedList(e.target.value)}
+          >
+            {lists.map(list => (
+              <option key={list.id} value={list.name}>{list.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className="mt-3">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+          <div className="flex flex-wrap gap-2">
+            {tags.map(tag => (
+              <button
+                type="button"
+                key={tag.id}
+                className={`px-2 py-1 text-xs rounded border ${selectedTags.includes(tag.name) ? 'bg-blue-100 border-blue-400 text-blue-800' : 'bg-gray-100 border-gray-300 text-gray-700'}`}
+                onClick={() => handleTagToggle(tag.name)}
+              >
+                {tag.name}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="flex justify-end gap-2 mt-4">
           <button
             onClick={onClose}

@@ -58,8 +58,15 @@ const App = () => {
   const upcomingTasks = tasks.filter(task => new Date(task.date) > weekEnd);
 
   // Handlers for tasks
-  const addNewTask = useCallback((title) => {
-    const newTask = { id: Date.now(), title, list: 'Work', completed: false, date: new Date().toISOString() };
+  const addNewTask = useCallback((title, _section, list, tagsArr) => {
+    const newTask = {
+      id: Date.now(),
+      title,
+      list: list || 'Work',
+      tags: tagsArr || [],
+      completed: false,
+      date: new Date().toISOString(),
+    };
     setTasks(prev => [...prev, newTask]);
   }, [setTasks]);
 
@@ -127,13 +134,13 @@ const App = () => {
           />
         );
       case 'today':
-        return <TodayView tasks={tasks} onToggleTask={toggleTask} onAddTask={addNewTask} onDeleteTask={deleteTask} />;
+        return <TodayView tasks={tasks} onToggleTask={toggleTask} onAddTask={addNewTask} onDeleteTask={deleteTask} lists={lists} tags={tags} />;
       case 'tomorrow':
-        return <TomorrowView tasks={tasks} onToggleTask={toggleTask} onAddTask={addNewTask} onDeleteTask={deleteTask} />;
+        return <TomorrowView tasks={tasks} onToggleTask={toggleTask} onAddTask={addNewTask} onDeleteTask={deleteTask} lists={lists} tags={tags} />;
       case 'thisweek':
-        return <ThisWeekView tasks={tasks} onToggleTask={toggleTask} onAddTask={addNewTask} onDeleteTask={deleteTask} />;
+        return <ThisWeekView tasks={tasks} onToggleTask={toggleTask} onAddTask={addNewTask} onDeleteTask={deleteTask} lists={lists} tags={tags} />;
       case 'upcoming':
-        return <UpcomingView tasks={tasks} onToggleTask={toggleTask} onAddTask={addNewTask} onDeleteTask={deleteTask} />;
+        return <UpcomingView tasks={tasks} onToggleTask={toggleTask} onAddTask={addNewTask} onDeleteTask={deleteTask} lists={lists} tags={tags} />;
       default:
         return <div className="p-4 text-center text-gray-500">View not found</div>;
     }
@@ -151,7 +158,9 @@ const App = () => {
           setSearchQuery={setSearchQuery}
           tasks={tasks}
           lists={lists}
+          setLists={setLists}
           tags={tags}
+          setTags={setTags}
           stickyNotes={stickyNotes}
         />
         <div className="flex-1 overflow-y-auto">

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Plus, ChevronRight, Calendar } from 'lucide-react';
 import AddTaskModal from './AddTaskModel';
 
-const UpcomingView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
+const UpcomingView = ({ tasks, onToggleTask, onAddTask, onDeleteTask, lists = [], tags = [] }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newTaskSection, setNewTaskSection] = useState('today');
 
@@ -40,33 +40,13 @@ const UpcomingView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
           {task.completed && <div className="w-2 h-2 bg-blue-500 rounded-full"></div>}
         </button>
         <div>
-          <span className={`text-gray-900 ${task.completed ? 'line-through text-gray-500' : ''}`}>
-            {typeof task.title === 'string' ? task.title : (console.warn('Invalid title for task', task), '[Invalid Title]')}
-          </span>
+          <span className={`text-gray-900 ${task.completed ? 'line-through text-gray-500' : ''}`}>{typeof task.title === 'string' ? task.title : (console.warn('Invalid title for task', task), '[Invalid Title]')}</span>
           {showDetails && (
             <div className="flex items-center space-x-2 mt-1">
-              {task.date && (
-                <>
-                  <Calendar size={12} className="text-gray-400" />
-                  <span className="text-xs text-gray-500">
-                    {new Date(task.date).toLocaleDateString('th-TH', { 
-                      day: '2-digit', 
-                      month: '2-digit', 
-                      year: '2-digit' 
-                    })}
-                  </span>
-                </>
-              )}
-              {task.subtasks && (
-                <span className="text-xs text-gray-500">{task.subtasks} Subtasks</span>
-              )}
-              {task.list && (
-                <span className={`text-xs px-2 py-1 rounded text-white ${
-                  task.list === 'Personal' ? 'bg-red-500' : 'bg-blue-500'
-                }`}>
-                  {task.list}
-                </span>
-              )}
+              {task.date && (<><Calendar size={12} className="text-gray-400" /><span className="text-xs text-gray-500">{new Date(task.date).toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: '2-digit' })}</span></>)}
+              {task.subtasks && (<span className="text-xs text-gray-500">{task.subtasks} Subtasks</span>)}
+              {task.list && (<span className={`text-xs px-2 py-1 rounded text-white ${task.list === 'Personal' ? 'bg-red-500' : 'bg-blue-500'}`}>{task.list}</span>)}
+              {task.tags && task.tags.length > 0 && (<span className="flex flex-wrap gap-1">{task.tags.map(tag => <span key={tag} className="text-xs px-1 py-0.5 rounded bg-blue-100 text-blue-800">{tag}</span>)}</span>)}
             </div>
           )}
         </div>
@@ -88,22 +68,8 @@ const UpcomingView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
     </button>
   );
 
-  const handleAddTask = (title, section) => {
-    if (title && title.trim()) {
-      let taskDate = new Date();
-      if (section === 'tomorrow') {
-        taskDate = new Date();
-        taskDate.setDate(taskDate.getDate() + 1);
-      } else if (section === 'thisWeek') {
-        taskDate = new Date();
-        taskDate.setDate(taskDate.getDate() + 3);
-      }
-      onAddTask({
-        title: title.trim(),
-        list: 'Work',
-        date: taskDate.toISOString()
-      });
-    }
+  const handleAddTask = (title, section, list, tagsArr) => {
+    onAddTask(title, section, list, tagsArr);
   };
 
   return (
@@ -165,6 +131,8 @@ const UpcomingView = ({ tasks, onToggleTask, onAddTask, onDeleteTask }) => {
         onClose={() => setShowAddModal(false)}
         onAdd={handleAddTask}
         section={newTaskSection}
+        lists={lists}
+        tags={tags}
       />
     </div>
   );
